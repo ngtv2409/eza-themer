@@ -1,10 +1,15 @@
+mod config;
+
 use std::env;
 use std::path::{PathBuf, Path};
 use std::fs;
 
 use anyhow::{Result as AnyResult, Context};
+use clap::Parser;
 
 fn main() -> AnyResult<()> {
+    let cf = config::Cli::parse();
+
     let theme_dir : PathBuf = get_config_dir().context(
             concat!(
             "Error: Cannot decide config directory. (expects as least one of ",
