@@ -35,13 +35,28 @@ fn main() -> AnyResult<()> {
     fs::create_dir_all(theme_dir)?;
 
     match cf.cmd {
+        Commands::List => {
+            for entry in fs::read_dir(theme_dir)? {
+                let entry = entry?;
+                let path = entry.path();
+                if path.is_file() {
+                    if let Some(ext) = path.extension() {
+                        if ext == "yml" {
+                            println!("{}", path.file_name().context(
+                                    "Failed to get file name"
+                            )?.display());
+                        }
+                    }
+                }
+            }
+        },
         Commands::Switch {filename} => {
             println!("Getting {filename}");
             let src = theme_dir.join(&filename);
             let dst = eza_dir.join("theme.yml");
             fs::copy(src, dst)?;
             println!("Applied {filename}");
-        }
+        },
     }
 
     Ok(())
