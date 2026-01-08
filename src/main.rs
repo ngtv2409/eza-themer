@@ -1,4 +1,5 @@
 mod config;
+use config::{Commands, Cli};
 
 use std::env;
 use std::path::{PathBuf, Path};
@@ -8,7 +9,7 @@ use anyhow::{Result as AnyResult, Context, anyhow};
 use clap::Parser;
 
 fn main() -> AnyResult<()> {
-    let cf = config::Cli::parse();
+    let cf = Cli::parse();
 
     let theme_dir : PathBuf = get_config_dir().context(
             concat!(
@@ -32,7 +33,6 @@ fn main() -> AnyResult<()> {
         ));
     }
     fs::create_dir_all(theme_dir)?;
-    
     Ok(())
 }
 
