@@ -59,6 +59,13 @@ fn main() -> AnyResult<()> {
             fs::copy(src, dst)?;
             println!("Applied {theme_name}");
         },
+        Commands::Add {theme_name, theme_path} => {
+            let mut dst_theme_file = PathBuf::from(&theme_name);
+            dst_theme_file.set_extension("yml");
+            let dst = theme_dir.join(&dst_theme_file);
+            fs::copy(theme_path, dst)?;
+            println!("Added {}", dst_theme_file.display());
+        },
     }
 
     Ok(())

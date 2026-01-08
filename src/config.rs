@@ -8,7 +8,18 @@ pub enum Commands {
         /// The theme name of the theme (relative to theme dir). Note: without .yml
         /// The file it looks is themename.yml
         theme_name: String,
-    }
+    },
+    Add {
+        #[arg(required=true)]
+        /// The theme name of the theme (relative to theme dir). Note: without .yml
+        /// The file it looks is themename.yml
+        theme_name: String,
+
+        #[arg(required=true)]
+        /// The path to theme file
+        theme_path: String,
+
+    },
 }
 
 #[derive(Debug, Parser)]
