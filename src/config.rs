@@ -5,8 +5,9 @@ pub enum Commands {
     List,
     Switch {
         #[arg(required=true)]
-        /// The filename of the theme (relative to theme dir)
-        filename: String,
+        /// The theme name of the theme (relative to theme dir). Note: without .yml
+        /// The file it looks is themename.yml
+        theme_name: String,
     }
 }
 

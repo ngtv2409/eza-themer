@@ -50,12 +50,14 @@ fn main() -> AnyResult<()> {
                 }
             }
         },
-        Commands::Switch {filename} => {
-            println!("Getting {filename}");
-            let src = theme_dir.join(&filename);
+        Commands::Switch {theme_name} => {
+            println!("Getting {theme_name}");
+            let mut theme_file = PathBuf::from(&theme_name);
+            theme_file.set_extension("yml");
+            let src = theme_dir.join(theme_file);
             let dst = eza_dir.join("theme.yml");
             fs::copy(src, dst)?;
-            println!("Applied {filename}");
+            println!("Applied {theme_name}");
         },
     }
 
