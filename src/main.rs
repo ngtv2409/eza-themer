@@ -22,7 +22,7 @@ fn main() -> AnyResult<()> {
             "Cannot decide eza directory. (expects as least one of ",
             "EZA_CONFIG_DIR, XDG_CONFIG_HOME, HOME to be set)")
         )?;
-    let eza_dir: &Path = theme_dir.as_path();
+    let eza_dir: &Path = eza_dir.as_path();
     if ! eza_dir.exists() {
         return Err(anyhow!(
             concat!(
