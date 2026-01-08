@@ -33,6 +33,17 @@ fn main() -> AnyResult<()> {
         ));
     }
     fs::create_dir_all(theme_dir)?;
+
+    match cf.cmd {
+        Commands::Switch {filename} => {
+            println!("Getting {filename}");
+            let src = theme_dir.join(&filename);
+            let dst = eza_dir.join("theme.yml");
+            fs::copy(src, dst)?;
+            println!("Applied {filename}");
+        }
+    }
+
     Ok(())
 }
 
