@@ -1,0 +1,18 @@
+# eza-themer
+
+An unofficial eza theme manager that somehow is missing.
+
+Version 0.1.0
+
+It is currently a small tool with only add, switch and list.
+But I do not plan to stop here. Upcoming features may include
+theme creation aids and better, interactive switch.
+
+
+# Features
+
+- Easily list, switch, add new themes
+
+> [!NOTE]
+> It works by copying the theme file into your eza config
+> directory. Be aware that it will OVERRIDE your old themes.
