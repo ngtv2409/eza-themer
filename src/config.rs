@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Subcommand)]
+#[command(version)]
 pub enum Commands {
     /// List all .yml files in the theme directory
     List,
