@@ -16,3 +16,10 @@ theme creation aids and better, interactive switch.
 > [!NOTE]
 > It works by copying the theme file into your eza config
 > directory. Be aware that it will OVERRIDE your old themes.
+
+# Installation
+
+You can easily get it from source or cargo
+```
+cargo install eza-themer
+```
