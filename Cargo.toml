@@ -2,6 +2,12 @@
 name = "eza-themer"
 version = "0.1.0"
 edition = "2024"
+description = "A simple unofficial theme manager for eza."
+license = "MIT"
+repository = "https://github.com/ngtv2409/eza-themer"
+homepage = "https://github.com/ngtv2409/eza-themer"
+categories = ["command-line-utilities"]
+keywords = ["eza", "theming", "terminal", "colors", "cli"]
 
 [dependencies]
 anyhow = "1.0.100"
