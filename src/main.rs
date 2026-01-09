@@ -23,7 +23,7 @@ fn main() -> AnyResult<()> {
             "EZA_CONFIG_DIR, XDG_CONFIG_HOME, HOME to be set)")
         )?;
     let eza_dir: &Path = eza_dir.as_path();
-    if ! eza_dir.exists() {
+    if ! eza_dir.exists() || ! eza_dir.is_dir() {
         return Err(anyhow!(
             format!(concat!(
                 "Eza home does not exists at designated location ",
