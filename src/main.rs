@@ -25,11 +25,12 @@ fn main() -> AnyResult<()> {
     let eza_dir: &Path = eza_dir.as_path();
     if ! eza_dir.exists() {
         return Err(anyhow!(
-            concat!(
+            format!(concat!(
                 "Eza home does not exists at designated location ",
                 "or is not a directory. ",
-                "Refuse to create."
-            )
+                "Refuse to create.\n",
+                "Manually create it at {}"
+            ), eza_dir.display())
         ));
     }
     fs::create_dir_all(theme_dir)?;
