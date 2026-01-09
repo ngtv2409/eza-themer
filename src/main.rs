@@ -13,7 +13,7 @@ fn main() -> AnyResult<()> {
 
     let theme_dir : PathBuf = get_config_dir().context(
             concat!(
-            "Cannot decide config directory. (expects as least one of ",
+            "Cannot decide theme directory. (expects as least one of ",
             "EZA_THEME_DIR, XDG_DATA_HOME, HOME to be set)")
         )?;
     let theme_dir: &Path = theme_dir.as_path();
