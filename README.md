@@ -9,7 +9,8 @@ But I do not plan to stop here. Upcoming features may include
 theme creation aids and better, interactive switch.
 
 Demo:
-![Demo](https://github.com/user-attachments/assets/e62d6841-d920-42d5-afab-1bd2355f5138)
+
+![Demo](https://github.com/user-attachments/assets/394d6924-c834-4a12-b018-8582e38b0569)
 
 # Features
 
