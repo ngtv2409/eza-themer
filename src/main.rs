@@ -1,7 +1,7 @@
 mod config;
 use config::{Commands, Cli};
 mod utils;
-use utils::create_test_dir;
+use utils::{create_test_dir, merge_yaml_files};
 
 use std::env;
 use std::path::{PathBuf, Path};
@@ -38,6 +38,9 @@ fn main() -> AnyResult<()> {
         ));
     }
     fs::create_dir_all(theme_dir)?;
+
+    // .ezt are ezt internal files, to distinguish from themes
+    let overlay_path = theme_dir.join("overlay.ezt.yml");
 
     match cf.cmd {
         Commands::List => {
@@ -88,9 +91,13 @@ fn main() -> AnyResult<()> {
             println!("Getting {theme_name}");
             let mut theme_file = PathBuf::from(&theme_name);
             theme_file.set_extension("yml");
-            let src = theme_dir.join(theme_file);
+            let src = theme_dir.join(&theme_file);
             let dst = eza_dir.join("theme.yml");
-            fs::copy(src, dst)?;
+            if overlay_path.exists() {
+                merge_yaml_files(&src, &overlay_path, &dst)?;
+            } else {
+                fs::copy(src, dst)?;
+            }
             println!("Applied {theme_name}");
         },
         Commands::Add {theme_name, theme_path} => {
