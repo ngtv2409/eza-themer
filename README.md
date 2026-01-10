@@ -8,6 +8,8 @@ It is currently a small tool with only add, switch and list.
 But I do not plan to stop here. Upcoming features may include
 theme creation aids and better, interactive switch.
 
+Demo:
+![Demo](https://github.com/user-attachments/assets/e62d6841-d920-42d5-afab-1bd2355f5138)
 
 # Features
 
