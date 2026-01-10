@@ -100,7 +100,36 @@ fn main() -> AnyResult<()> {
             fs::copy(theme_path, dst)?;
             println!("Added {}", dst_theme_file.display());
         },
-        Commands::Preview {theme_name} => {
+        Commands::Preview {theme_name, interactive} => {
+            let theme_name = if interactive {
+                let mut themes: Vec<String> = Vec::new();
+                for entry in fs::read_dir(theme_dir)? {
+                    let entry = entry?;
+                    let path = entry.path();
+                    if path.is_file() {
+                        if let Some(ext) = path.extension() {
+                            if ext == "yml" {
+                                themes.push(
+                                    path.file_name()
+                                    .ok_or_else(|| anyhow!("Failed to get filename"))?
+                                    .to_str()
+                                    .ok_or_else(|| anyhow!("Filename is not valid UTF-8"))?
+                                    .to_string()
+                                );
+                            }
+                        }
+                    }
+                }
+                let selection = Select::with_theme(&ColorfulTheme::default())
+                    .items(&themes)
+                    .default(0)
+                    .interact()
+                    .unwrap();
+                themes[selection].clone()
+            } else {
+                // if not interact, theme name is required
+                theme_name.unwrap()
+            };
             let mut theme_file = PathBuf::from(&theme_name);
             theme_file.set_extension("yml");
             let src = theme_dir.join(&theme_file);

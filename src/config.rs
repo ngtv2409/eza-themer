@@ -30,10 +30,14 @@ pub enum Commands {
     },
     /// Preview a theme by running eza on a test dir
     Preview {
-        #[arg(required=true)]
+        #[arg(required_unless_present="interactive")]
         /// The theme name of the theme (relative to theme dir). Note: without .yml
         /// The file it looks is themename.yml
-        theme_name: String,
+        theme_name: Option<String>,
+
+        #[arg(short, long)]
+        /// Interactive mode
+        interactive: bool,
     },
 }
 
