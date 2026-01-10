@@ -24,6 +24,13 @@ pub enum Commands {
         theme_path: String,
 
     },
+    /// Preview a theme by running eza on a test dir
+    Preview {
+        #[arg(required=true)]
+        /// The theme name of the theme (relative to theme dir). Note: without .yml
+        /// The file it looks is themename.yml
+        theme_name: String,
+    },
 }
 
 #[derive(Debug, Parser)]
