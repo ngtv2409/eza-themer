@@ -7,10 +7,14 @@ pub enum Commands {
     List,
     /// Switch to a theme by name
     Switch {
-        #[arg(required=true)]
+        #[arg(required_unless_present="interactive")]
         /// The theme name of the theme (relative to theme dir). Note: without .yml
         /// The file it looks is themename.yml
-        theme_name: String,
+        theme_name: Option<String>,
+
+        #[arg(short, long)]
+        /// Interactive mode
+        interactive: bool,
     },
     /// Add a new theme from theme name and path to theme file
     Add {

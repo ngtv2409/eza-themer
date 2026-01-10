@@ -12,3 +12,4 @@ keywords = ["eza", "theming", "terminal", "colors", "cli"]
 [dependencies]
 anyhow = "1.0.100"
 clap = { version = "4.5.54", features = ["derive"] }
+dialoguer = "0.12.0"
