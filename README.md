@@ -26,3 +26,14 @@ You can easily get it from source or cargo
 ```
 cargo install eza-themer
 ```
+
+# Setup
+
+`eza-themer` find your themes inside `EZA_THEME_DIR` 
+or `XDG_DATA_HOME/eza-themes/` or `HOME/.local/share/eza-themes`
+
+You can put your themes there as `${theme_name}.yml`s.
+
+Proper theme installation will be added in the future,
+right now you can `eza-themer add {theme name} {path to theme file}`
+or manually copy
