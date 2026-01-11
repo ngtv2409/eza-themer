@@ -1,12 +1,8 @@
 # eza-themer
 
-An unofficial eza theme manager that somehow is missing.
+An unofficial eza theme manager which should not be missing
 
-Version 0.2.0
-
-It is currently a small tool with only add, switch and list.
-But I do not plan to stop here. Upcoming features may include
-theme creation aids and better, interactive switch.
+Version 0.3.0
 
 Demo:
 
@@ -15,6 +11,7 @@ Demo:
 # Features
 
 - Easily list, switch, add new themes
+- Globally overlay all of your themes
 - Basic interactivity
 
 > [!NOTE]
@@ -35,6 +32,10 @@ or `XDG_DATA_HOME/eza-themes/` or `HOME/.local/share/eza-themes`
 
 You can put your themes there as `${theme_name}.yml`s.
 
+`.themes` will not be listed and shouldn't be used. `ezt` uses them 
+for special usage. For example `.overlay.yml` is a special theme 
+which overwrite your themes before they are applied.
+
 Proper theme installation will be added in the future,
 right now you can `eza-themer add {theme name} {path to theme file}`
-or manually copy
+or manually copy them to the designated directory.
