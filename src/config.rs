@@ -7,7 +7,7 @@ pub enum Commands {
     List,
     /// Switch to a theme by name
     Switch {
-        #[arg(required_unless_present="interactive")]
+        #[arg(required_unless_present = "interactive")]
         /// The theme name of the theme (relative to theme dir). Note: without .yml
         /// The file it looks is themename.yml
         theme_name: Option<String>,
@@ -18,19 +18,18 @@ pub enum Commands {
     },
     /// Add a new theme from theme name and path to theme file
     Add {
-        #[arg(required=true)]
+        #[arg(required = true)]
         /// The theme name of the theme (relative to theme dir). Note: without .yml
         /// The file it looks is themename.yml
         theme_name: String,
 
-        #[arg(required=true)]
+        #[arg(required = true)]
         /// The path to theme file
         theme_path: String,
-
     },
     /// Preview a theme by running eza on a test dir
     Preview {
-        #[arg(required_unless_present="interactive")]
+        #[arg(required_unless_present = "interactive")]
         /// The theme name of the theme (relative to theme dir). Note: without .yml
         /// The file it looks is themename.yml
         theme_name: Option<String>,

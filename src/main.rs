@@ -1,72 +1,79 @@
 mod config;
-use config::{Commands, Cli};
+use config::{Cli, Commands};
 mod utils;
 use utils::{create_test_dir, merge_yaml_files};
 
 use std::env;
-use std::path::{PathBuf, Path};
 use std::fs;
-use std::process::{Command};
+use std::path::{Path, PathBuf};
+use std::process::Command;
 
-use dialoguer::{Select, theme::ColorfulTheme};
-use anyhow::{Result as AnyResult, Context, anyhow};
+use anyhow::{Context, Result as AnyResult, anyhow};
 use clap::Parser;
+use dialoguer::{Select, theme::ColorfulTheme};
 
 fn main() -> AnyResult<()> {
     let cf = Cli::parse();
 
-    let theme_dir : PathBuf = get_config_dir().context(
-            concat!(
-            "Cannot decide theme directory. (expects as least one of ",
-            "EZA_THEME_DIR, XDG_DATA_HOME, HOME to be set)")
-        )?;
+    let theme_dir: PathBuf = get_config_dir().context(concat!(
+        "Cannot decide theme directory. (expects as least one of ",
+        "EZA_THEME_DIR, XDG_DATA_HOME, HOME to be set)"
+    ))?;
     let theme_dir: &Path = theme_dir.as_path();
-    let eza_dir : PathBuf = get_eza_dir().context(
-            concat!(
-            "Cannot decide eza directory. (expects as least one of ",
-            "EZA_CONFIG_DIR, XDG_CONFIG_HOME, HOME to be set)")
-        )?;
+    let eza_dir: PathBuf = get_eza_dir().context(concat!(
+        "Cannot decide eza directory. (expects as least one of ",
+        "EZA_CONFIG_DIR, XDG_CONFIG_HOME, HOME to be set)"
+    ))?;
     let eza_dir: &Path = eza_dir.as_path();
-    if ! eza_dir.exists() || ! eza_dir.is_dir() {
-        return Err(anyhow!(
-            format!(concat!(
+    if !eza_dir.exists() || !eza_dir.is_dir() {
+        return Err(anyhow!(format!(
+            concat!(
                 "Eza home does not exists at designated location ",
                 "or is not a directory. ",
                 "Refuse to create.\n",
                 "Manually create it at {}"
-            ), eza_dir.display())
-        ));
+            ),
+            eza_dir.display()
+        )));
     }
-    fs::create_dir_all(theme_dir).context(
-        format!("Failed to create theme directory at {}", theme_dir.display())
-    )?;
+    fs::create_dir_all(theme_dir).context(format!(
+        "Failed to create theme directory at {}",
+        theme_dir.display()
+    ))?;
 
     // .ezt are ezt internal files, to distinguish from themes
     let overlay_path = theme_dir.join("overlay.ezt.yml");
 
     match cf.cmd {
         Commands::List => {
-            for entry in fs::read_dir(theme_dir).context(
-                format!("Failed to read directory {}", theme_dir.display()))? {
+            for entry in fs::read_dir(theme_dir)
+                .context(format!("Failed to read directory {}", theme_dir.display()))?
+            {
                 let entry = entry?;
                 let path = entry.path();
                 if path.is_file() {
                     if let Some(ext) = path.extension() {
                         if ext == "yml" {
-                            println!("{}", path.file_name().context(
-                                    "Failed to get file name"
-                            )?.display());
+                            println!(
+                                "{}",
+                                path.file_name()
+                                    .context("Failed to get file name")?
+                                    .display()
+                            );
                         }
                     }
                 }
             }
-        },
-        Commands::Switch {theme_name, interactive} => {
+        }
+        Commands::Switch {
+            theme_name,
+            interactive,
+        } => {
             let theme_name = if interactive {
                 let mut themes: Vec<String> = Vec::new();
-                for entry in fs::read_dir(theme_dir).context(
-                    format!("Failed to read directory {}", 
-                        theme_dir.display()))? {
+                for entry in fs::read_dir(theme_dir)
+                    .context(format!("Failed to read directory {}", theme_dir.display()))?
+                {
                     let entry = entry?;
                     let path = entry.path();
                     if path.is_file() {
@@ -74,10 +81,10 @@ fn main() -> AnyResult<()> {
                             if ext == "yml" {
                                 themes.push(
                                     path.file_name()
-                                    .ok_or_else(|| anyhow!("Failed to get filename"))?
-                                    .to_str()
-                                    .ok_or_else(|| anyhow!("Filename is not valid UTF-8"))?
-                                    .to_string()
+                                        .ok_or_else(|| anyhow!("Failed to get filename"))?
+                                        .to_str()
+                                        .ok_or_else(|| anyhow!("Filename is not valid UTF-8"))?
+                                        .to_string(),
                                 );
                             }
                         }
@@ -101,29 +108,37 @@ fn main() -> AnyResult<()> {
             if overlay_path.exists() {
                 merge_yaml_files(&src, &overlay_path, &dst)?;
             } else {
-                fs::copy(&src, &dst).context(
-                    format!("Failed to copy files {} -> {}",
-                        src.display(), dst.display())
-                    )?;
+                fs::copy(&src, &dst).context(format!(
+                    "Failed to copy files {} -> {}",
+                    src.display(),
+                    dst.display()
+                ))?;
             }
             println!("Applied {theme_name}");
-        },
-        Commands::Add {theme_name, theme_path} => {
+        }
+        Commands::Add {
+            theme_name,
+            theme_path,
+        } => {
             let mut dst_theme_file = PathBuf::from(&theme_name);
             dst_theme_file.set_extension("yml");
             let dst = theme_dir.join(&dst_theme_file);
-            fs::copy(&theme_path, &dst).context(
-                    format!("Failed to copy files {} -> {}",
-                        theme_path, dst.display())
-                    )?;
+            fs::copy(&theme_path, &dst).context(format!(
+                "Failed to copy files {} -> {}",
+                theme_path,
+                dst.display()
+            ))?;
             println!("Added {}", dst_theme_file.display());
-        },
-        Commands::Preview {theme_name, interactive} => {
+        }
+        Commands::Preview {
+            theme_name,
+            interactive,
+        } => {
             let theme_name = if interactive {
                 let mut themes: Vec<String> = Vec::new();
-                for entry in fs::read_dir(theme_dir).context(
-                    format!("Failed to read directory {}",
-                        theme_dir.display()))? {
+                for entry in fs::read_dir(theme_dir)
+                    .context(format!("Failed to read directory {}", theme_dir.display()))?
+                {
                     let entry = entry?;
                     let path = entry.path();
                     if path.is_file() {
@@ -131,10 +146,10 @@ fn main() -> AnyResult<()> {
                             if ext == "yml" {
                                 themes.push(
                                     path.file_name()
-                                    .ok_or_else(|| anyhow!("Failed to get filename"))?
-                                    .to_str()
-                                    .ok_or_else(|| anyhow!("Filename is not valid UTF-8"))?
-                                    .to_string()
+                                        .ok_or_else(|| anyhow!("Failed to get filename"))?
+                                        .to_str()
+                                        .ok_or_else(|| anyhow!("Filename is not valid UTF-8"))?
+                                        .to_string(),
                                 );
                             }
                         }
@@ -154,7 +169,7 @@ fn main() -> AnyResult<()> {
             theme_file.set_extension("yml");
             let src = theme_dir.join(&theme_file);
 
-            if ! src.exists() {
+            if !src.exists() {
                 // ![TODO] improve error messages
                 println!("{}", theme_file.display());
                 return Err(anyhow!("No such file or directory"));
@@ -165,11 +180,12 @@ fn main() -> AnyResult<()> {
             let test_dir = theme_dir.join("test_dir");
 
             let dst = test_dir.join("theme.yml");
-            fs::copy(&src, &dst).context(
-                format!("Failed to copy files {} -> {}",
-                    src.display(), dst.display())
-                )?;
-            
+            fs::copy(&src, &dst).context(format!(
+                "Failed to copy files {} -> {}",
+                src.display(),
+                dst.display()
+            ))?;
+
             // replace the current process with eza
             let mut eza = Command::new("eza")
                 .arg("--color")
@@ -183,30 +199,37 @@ fn main() -> AnyResult<()> {
             let status = eza.wait()?;
             match status.code() {
                 Some(code) => println!("Eza exit: {}", code),
-                None => println!("Eza terminated by signal")
+                None => println!("Eza terminated by signal"),
             };
-        },
+        }
     }
 
     Ok(())
 }
 
 fn get_config_dir() -> Option<PathBuf> {
-    env::var("EZA_THEME_DIR").ok().map(PathBuf::from)
+    env::var("EZA_THEME_DIR")
+        .ok()
+        .map(PathBuf::from)
         .or_else(|| {
             env::var("XDG_DATA_HOME")
                 .ok()
                 .map(|p| PathBuf::from(p).join("eza-themes"))
         })
         .or_else(|| {
-            env::var("HOME")
-                .ok()
-                .map(|p| PathBuf::from(p).join(".local").join("share").join("eza-themes"))
+            env::var("HOME").ok().map(|p| {
+                PathBuf::from(p)
+                    .join(".local")
+                    .join("share")
+                    .join("eza-themes")
+            })
         })
 }
 
 fn get_eza_dir() -> Option<PathBuf> {
-    env::var("EZA_CONFIG_DIR").ok().map(PathBuf::from)
+    env::var("EZA_CONFIG_DIR")
+        .ok()
+        .map(PathBuf::from)
         .or_else(|| {
             env::var("XDG_CONFIG_HOME")
                 .ok()
