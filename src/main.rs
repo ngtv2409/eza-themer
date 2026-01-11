@@ -41,8 +41,8 @@ fn main() -> AnyResult<()> {
         theme_dir.display()
     ))?;
 
-    // .ezt are ezt internal files, to distinguish from themes
-    let overlay_path = theme_dir.join("overlay.ezt.yml");
+    // .files are ezt internal files, to distinguish from themes
+    let overlay_path = theme_dir.join(".overlay.yml");
 
     match cf.cmd {
         Commands::List => {
