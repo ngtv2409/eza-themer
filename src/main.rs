@@ -73,7 +73,6 @@ fn main() -> AnyResult<()> {
                 // if not interact, theme name is required
                 theme_name.unwrap()
             };
-            println!("Getting {theme_name}");
             let mut theme_file = PathBuf::from(&theme_name);
             theme_file.set_extension("yml");
             let src = theme_dir.join(&theme_file);
@@ -82,12 +81,11 @@ fn main() -> AnyResult<()> {
                 merge_yaml_files(&src, &overlay_path, &dst)?;
             } else {
                 fs::copy(&src, &dst).context(format!(
-                    "Failed to copy files {} -> {}",
+                    "Failed to copy file {} -> {}",
                     src.display(),
                     dst.display()
                 ))?;
             }
-            println!("Applied {theme_name}");
         }
         Commands::Add {
             theme_name,
@@ -97,11 +95,10 @@ fn main() -> AnyResult<()> {
             dst_theme_file.set_extension("yml");
             let dst = theme_dir.join(&dst_theme_file);
             fs::copy(&theme_path, &dst).context(format!(
-                "Failed to copy files {} -> {}",
+                "Failed to copy file {} -> {}",
                 theme_path,
                 dst.display()
             ))?;
-            println!("Added {}", dst_theme_file.display());
         }
         Commands::Preview {
             theme_name,
@@ -139,7 +136,7 @@ fn main() -> AnyResult<()> {
 
             let dst = test_dir.join("theme.yml");
             fs::copy(&src, &dst).context(format!(
-                "Failed to copy files {} -> {}",
+                "Failed to copy file {} -> {}",
                 src.display(),
                 dst.display()
             ))?;
