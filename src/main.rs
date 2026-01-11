@@ -1,7 +1,8 @@
 mod config;
 use config::{Cli, Commands};
 mod utils;
-use utils::{create_test_dir, merge_yaml_files};
+use utils::{create_test_dir, merge_yaml_files,
+vec_list_themes};
 
 use std::env;
 use std::fs;
@@ -46,23 +47,10 @@ fn main() -> AnyResult<()> {
 
     match cf.cmd {
         Commands::List => {
-            for entry in fs::read_dir(theme_dir)
-                .context(format!("Failed to read directory {}", theme_dir.display()))?
-            {
-                let entry = entry?;
-                let path = entry.path();
-                if path.is_file() {
-                    if let Some(ext) = path.extension() {
-                        if ext == "yml" {
-                            println!(
-                                "{}",
-                                path.file_name()
-                                    .context("Failed to get file name")?
-                                    .display()
-                            );
-                        }
-                    }
-                }
+            let v = vec_list_themes(theme_dir)
+                .context("Failed to get themes")?;
+            for t in &v {
+                print!("{}\n", t.display());
             }
         }
         Commands::Switch {
@@ -70,26 +58,11 @@ fn main() -> AnyResult<()> {
             interactive,
         } => {
             let theme_name = if interactive {
-                let mut themes: Vec<String> = Vec::new();
-                for entry in fs::read_dir(theme_dir)
-                    .context(format!("Failed to read directory {}", theme_dir.display()))?
-                {
-                    let entry = entry?;
-                    let path = entry.path();
-                    if path.is_file() {
-                        if let Some(ext) = path.extension() {
-                            if ext == "yml" {
-                                themes.push(
-                                    path.file_name()
-                                        .ok_or_else(|| anyhow!("Failed to get filename"))?
-                                        .to_str()
-                                        .ok_or_else(|| anyhow!("Filename is not valid UTF-8"))?
-                                        .to_string(),
-                                );
-                            }
-                        }
-                    }
-                }
+                let themes: Vec<String> = vec_list_themes(theme_dir)
+                    .context("Failed to get themes")?
+                    .iter().map(
+                    |pb: &PathBuf| pb.display().to_string()
+                ).collect();
                 let selection = Select::with_theme(&ColorfulTheme::default())
                     .items(&themes)
                     .default(0)
@@ -135,26 +108,11 @@ fn main() -> AnyResult<()> {
             interactive,
         } => {
             let theme_name = if interactive {
-                let mut themes: Vec<String> = Vec::new();
-                for entry in fs::read_dir(theme_dir)
-                    .context(format!("Failed to read directory {}", theme_dir.display()))?
-                {
-                    let entry = entry?;
-                    let path = entry.path();
-                    if path.is_file() {
-                        if let Some(ext) = path.extension() {
-                            if ext == "yml" {
-                                themes.push(
-                                    path.file_name()
-                                        .ok_or_else(|| anyhow!("Failed to get filename"))?
-                                        .to_str()
-                                        .ok_or_else(|| anyhow!("Filename is not valid UTF-8"))?
-                                        .to_string(),
-                                );
-                            }
-                        }
-                    }
-                }
+                let themes: Vec<String> = vec_list_themes(theme_dir)
+                    .context("Failed to get themes")?
+                    .iter().map(
+                    |pb: &PathBuf| pb.display().to_string()
+                ).collect();
                 let selection = Select::with_theme(&ColorfulTheme::default())
                     .items(&themes)
                     .default(0)

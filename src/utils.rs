@@ -1,7 +1,7 @@
 use anyhow::Result as AnyResult;
 use serde_yaml::{Mapping, Value};
 use std::fs::File;
-use std::{fs, path::Path};
+use std::{fs, path::Path, path::PathBuf};
 
 /*
     Create a test directory to preview eza
@@ -103,4 +103,27 @@ pub fn merge_yaml_files(base_path: &Path, overlay_path: &Path, dst: &Path) -> An
     fs::write(dst, serde_yaml::to_string(&merged)?)?;
 
     Ok(())
+}
+
+pub fn vec_list_themes(dir: &Path) -> AnyResult<Vec<PathBuf>> {
+    let mut v = Vec::new();
+    for entry in fs::read_dir(dir)? {
+        let entry = entry?;
+        let filename = entry.file_name();
+        let filename_str = filename.to_string_lossy();
+
+        // Skip dotfiles
+        if filename_str.starts_with('.') {
+            continue;
+        }
+        let path = entry.path();
+        if path.is_file() {
+            if let Some(ext) = path.extension() {
+                if ext == "yml" {
+                    v.push(PathBuf::from(filename));
+                }
+            }
+        }
+    }
+    Ok(v)
 }
