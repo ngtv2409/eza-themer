@@ -37,14 +37,17 @@ fn main() -> AnyResult<()> {
             ), eza_dir.display())
         ));
     }
-    fs::create_dir_all(theme_dir)?;
+    fs::create_dir_all(theme_dir).context(
+        format!("Failed to create theme directory at {}", theme_dir.display())
+    )?;
 
     // .ezt are ezt internal files, to distinguish from themes
     let overlay_path = theme_dir.join("overlay.ezt.yml");
 
     match cf.cmd {
         Commands::List => {
-            for entry in fs::read_dir(theme_dir)? {
+            for entry in fs::read_dir(theme_dir).context(
+                format!("Failed to read directory {}", theme_dir.display()))? {
                 let entry = entry?;
                 let path = entry.path();
                 if path.is_file() {
@@ -61,7 +64,9 @@ fn main() -> AnyResult<()> {
         Commands::Switch {theme_name, interactive} => {
             let theme_name = if interactive {
                 let mut themes: Vec<String> = Vec::new();
-                for entry in fs::read_dir(theme_dir)? {
+                for entry in fs::read_dir(theme_dir).context(
+                    format!("Failed to read directory {}", 
+                        theme_dir.display()))? {
                     let entry = entry?;
                     let path = entry.path();
                     if path.is_file() {
@@ -96,7 +101,10 @@ fn main() -> AnyResult<()> {
             if overlay_path.exists() {
                 merge_yaml_files(&src, &overlay_path, &dst)?;
             } else {
-                fs::copy(src, dst)?;
+                fs::copy(&src, &dst).context(
+                    format!("Failed to copy files {} -> {}",
+                        src.display(), dst.display())
+                    )?;
             }
             println!("Applied {theme_name}");
         },
@@ -104,13 +112,18 @@ fn main() -> AnyResult<()> {
             let mut dst_theme_file = PathBuf::from(&theme_name);
             dst_theme_file.set_extension("yml");
             let dst = theme_dir.join(&dst_theme_file);
-            fs::copy(theme_path, dst)?;
+            fs::copy(&theme_path, &dst).context(
+                    format!("Failed to copy files {} -> {}",
+                        theme_path, dst.display())
+                    )?;
             println!("Added {}", dst_theme_file.display());
         },
         Commands::Preview {theme_name, interactive} => {
             let theme_name = if interactive {
                 let mut themes: Vec<String> = Vec::new();
-                for entry in fs::read_dir(theme_dir)? {
+                for entry in fs::read_dir(theme_dir).context(
+                    format!("Failed to read directory {}",
+                        theme_dir.display()))? {
                     let entry = entry?;
                     let path = entry.path();
                     if path.is_file() {
@@ -147,12 +160,15 @@ fn main() -> AnyResult<()> {
                 return Err(anyhow!("No such file or directory"));
             }
 
-            create_test_dir(theme_dir)?;
+            create_test_dir(theme_dir).context("Failed to create test dir")?;
 
             let test_dir = theme_dir.join("test_dir");
 
             let dst = test_dir.join("theme.yml");
-            fs::copy(src, dst)?;
+            fs::copy(&src, &dst).context(
+                format!("Failed to copy files {} -> {}",
+                    src.display(), dst.display())
+                )?;
             
             // replace the current process with eza
             let mut eza = Command::new("eza")
@@ -162,7 +178,8 @@ fn main() -> AnyResult<()> {
                 .arg("--group-directories-first")
                 .arg(&format!("{}", test_dir.display()))
                 .env("EZA_CONFIG_DIR", format!("{}", test_dir.display()))
-                .spawn()?;
+                .spawn()
+                .context("Failed to spawn eza")?;
             let status = eza.wait()?;
             match status.code() {
                 Some(code) => println!("Eza exit: {}", code),
