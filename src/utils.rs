@@ -1,8 +1,8 @@
+use crate::theme_name::ThemeName;
 use anyhow::Result as AnyResult;
 use serde_yaml::{Mapping, Value};
 use std::fs::File;
 use std::{fs, path::Path};
-use crate::theme_name::ThemeName;
 
 /*
     Create a test directory to preview eza
@@ -121,7 +121,9 @@ pub fn vec_list_themes(dir: &Path) -> AnyResult<Vec<ThemeName>> {
         if path.is_file() {
             if let Some(ext) = path.extension() {
                 if ext == "yml" {
-                    if let Some(tn) = ThemeName::from_str(&filename_str.strip_suffix(".yml").unwrap()) {
+                    if let Some(tn) =
+                        ThemeName::from_str(&filename_str.strip_suffix(".yml").unwrap())
+                    {
                         v.push(tn);
                     }
                 }

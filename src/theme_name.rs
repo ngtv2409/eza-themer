@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 #[derive(Debug)]
 pub struct ThemeName {
-    s: String
+    s: String,
 }
 
 impl ThemeName {
@@ -17,22 +17,21 @@ impl ThemeName {
             return None;
         }
 
-        Some(Self {
-            s: s
-        })
+        Some(Self { s: s })
     }
 
     pub fn prettify(&self) -> String {
-         self.s.split('-')
-             .map(|word| {
-                 let mut chars = word.chars();
-                 match chars.next() {
-                     Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
-                     None => String::new(),
-                 }
-             })
-             .collect::<Vec<_>>()
-             .join(" ")
+        self.s
+            .split('-')
+            .map(|word| {
+                let mut chars = word.chars();
+                match chars.next() {
+                    Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
+                    None => String::new(),
+                }
+            })
+            .collect::<Vec<_>>()
+            .join(" ")
     }
 
     pub fn to_filename(&self) -> PathBuf {

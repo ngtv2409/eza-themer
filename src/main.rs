@@ -1,8 +1,7 @@
 mod config;
 use config::{Cli, Commands};
 mod utils;
-use utils::{create_test_dir, merge_yaml_files,
-vec_list_themes};
+use utils::{create_test_dir, merge_yaml_files, vec_list_themes};
 mod theme_name;
 use theme_name::ThemeName;
 
@@ -49,8 +48,7 @@ fn main() -> AnyResult<()> {
 
     match cf.cmd {
         Commands::List => {
-            let v = vec_list_themes(theme_dir)
-                .context("Failed to get themes")?;
+            let v = vec_list_themes(theme_dir).context("Failed to get themes")?;
             for t in &v {
                 print!("{}\n", t.prettify());
             }
@@ -60,9 +58,11 @@ fn main() -> AnyResult<()> {
             interactive,
         } => {
             let theme_name = if interactive {
-                let themes: Vec<String> = vec_list_themes(theme_dir).context("Failed to get themes")?
+                let themes: Vec<String> = vec_list_themes(theme_dir)
+                    .context("Failed to get themes")?
                     .iter()
-                    .map(|tn| tn.prettify()).collect();
+                    .map(|tn| tn.prettify())
+                    .collect();
                 let selection = Select::with_theme(&ColorfulTheme::default())
                     .items(&themes)
                     .default(0)
@@ -73,7 +73,9 @@ fn main() -> AnyResult<()> {
                 // if not interact, theme name is required
                 theme_name.unwrap()
             };
-            let theme_file = ThemeName::from_str(&theme_name).context("Invalid theme name")?.to_filename();
+            let theme_file = ThemeName::from_str(&theme_name)
+                .context("Invalid theme name")?
+                .to_filename();
             let src = theme_dir.join(&theme_file);
             let dst = eza_dir.join("theme.yml");
             if overlay_path.exists() {
@@ -91,7 +93,8 @@ fn main() -> AnyResult<()> {
             theme_path,
         } => {
             let dst_theme_file = ThemeName::from_str(&theme_name)
-                .context("Invalid theme name")?.to_filename();
+                .context("Invalid theme name")?
+                .to_filename();
             let dst = theme_dir.join(&dst_theme_file);
             fs::copy(&theme_path, &dst).context(format!(
                 "Failed to copy file {} -> {}",
@@ -104,9 +107,11 @@ fn main() -> AnyResult<()> {
             interactive,
         } => {
             let theme_name = if interactive {
-                let themes: Vec<String> = vec_list_themes(theme_dir).context("Failed to get themes")?
+                let themes: Vec<String> = vec_list_themes(theme_dir)
+                    .context("Failed to get themes")?
                     .iter()
-                    .map(|tn| tn.prettify()).collect();
+                    .map(|tn| tn.prettify())
+                    .collect();
                 let selection = Select::with_theme(&ColorfulTheme::default())
                     .items(&themes)
                     .default(0)
@@ -118,7 +123,8 @@ fn main() -> AnyResult<()> {
                 theme_name.unwrap()
             };
             let theme_file = ThemeName::from_str(&theme_name)
-                .context("Invalid theme name")?.to_filename();
+                .context("Invalid theme name")?
+                .to_filename();
             let src = theme_dir.join(&theme_file);
             if !src.exists() {
                 // ![TODO] improve error messages
