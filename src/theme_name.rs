@@ -69,3 +69,27 @@ fn is_valid_theme_name(s: &str) -> bool {
         )
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn is_valid_theme_name_should_success() {
+        assert_eq!(is_valid_theme_name("onedark"), true);
+        assert_eq!(is_valid_theme_name("one -dark"), true);
+        assert_eq!(is_valid_theme_name("One _dark123"), true);
+    }
+    #[test]
+    fn is_valid_theme_name_should_fail() {
+        assert_eq!(is_valid_theme_name("one@dark"), false);
+        assert_eq!(is_valid_theme_name("one $dark"), false);
+        assert_eq!(is_valid_theme_name("One] -dark"), false);
+    }
+    #[test]
+    fn canon_sep_expected_result() {
+        assert_eq!(&canon_sep("w1-w2"), "w1-w2");
+        assert_eq!(&canon_sep("w1 w2"), "w1-w2");
+        assert_eq!(&canon_sep("-w1_w2_"), "w1-w2");
+    }
+}

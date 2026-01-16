@@ -3,6 +3,7 @@ use config::{Cli, Commands};
 mod utils;
 use utils::{create_test_dir, merge_yaml_files,
 vec_list_themes};
+mod theme_name;
 
 use std::env;
 use std::fs;
