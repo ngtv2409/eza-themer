@@ -57,22 +57,8 @@ fn main() -> AnyResult<()> {
             theme_name,
             interactive,
         } => {
-            let theme_name = if interactive {
-                let themes: Vec<String> = vec_list_themes(theme_dir)
-                    .context("Failed to get themes")?
-                    .iter()
-                    .map(|tn| tn.prettify())
-                    .collect();
-                let selection = Select::with_theme(&ColorfulTheme::default())
-                    .items(&themes)
-                    .default(0)
-                    .interact()
-                    .unwrap();
-                themes[selection].clone()
-            } else {
-                // if not interact, theme name is required
-                theme_name.unwrap()
-            };
+            let theme_name = resolve_theme_name(theme_dir, interactive, theme_name)
+                .context("Failed to select theme name")?;
             let theme_file = ThemeName::from_str(&theme_name)
                 .context("Invalid theme name")?
                 .to_filename();
@@ -106,22 +92,8 @@ fn main() -> AnyResult<()> {
             theme_name,
             interactive,
         } => {
-            let theme_name = if interactive {
-                let themes: Vec<String> = vec_list_themes(theme_dir)
-                    .context("Failed to get themes")?
-                    .iter()
-                    .map(|tn| tn.prettify())
-                    .collect();
-                let selection = Select::with_theme(&ColorfulTheme::default())
-                    .items(&themes)
-                    .default(0)
-                    .interact()
-                    .unwrap();
-                themes[selection].clone()
-            } else {
-                // if not interact, theme name is required
-                theme_name.unwrap()
-            };
+            let theme_name = resolve_theme_name(theme_dir, interactive, theme_name)
+                .context("Failed to select theme name")?;
             let theme_file = ThemeName::from_str(&theme_name)
                 .context("Invalid theme name")?
                 .to_filename();
@@ -197,4 +169,25 @@ fn get_eza_dir() -> Option<PathBuf> {
                 .ok()
                 .map(|p| PathBuf::from(p).join(".config").join("eza"))
         })
+}
+
+fn resolve_theme_name(
+    theme_dir: &Path, 
+    is_interactive: bool, maybe_theme_name: Option<String>
+) -> AnyResult<String> {
+        if is_interactive {
+            let themes: Vec<String> = vec_list_themes(theme_dir)
+                .context("Failed to get themes")?
+                .iter()
+                .map(|tn| tn.prettify())
+                .collect();
+            let selection = Select::with_theme(&ColorfulTheme::default())
+                .items(&themes)
+                .default(0)
+                .interact()?;
+            Ok(themes[selection].clone())
+        } else {
+            // if not interact, theme name is required
+            Ok(maybe_theme_name.unwrap())
+        }
 }
