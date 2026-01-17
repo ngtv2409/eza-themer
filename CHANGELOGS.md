@@ -1,5 +1,10 @@
 # Changelogs
 
+## [1.0.0]
+- Restrict theme names
+- Allow more ways to specify themes
+- Prettify theme name output
+
 ## [0.3.0]
 - Add global overlay file `.overlay.yml` which overwrites all themes before applied
 
