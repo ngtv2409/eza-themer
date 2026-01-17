@@ -17,11 +17,10 @@ use dialoguer::{Select, theme::ColorfulTheme};
 fn main() -> AnyResult<()> {
     let cf = Cli::parse();
 
-    let theme_dir: PathBuf = get_config_dir().context(concat!(
+    let theme_dir = get_config_dir().context(concat!(
         "Cannot decide theme directory. (expects as least one of ",
         "EZA_THEME_DIR, XDG_DATA_HOME, HOME to be set)"
     ))?;
-    let theme_dir: &Path = theme_dir.as_path();
     let eza_dir: PathBuf = get_eza_dir().context(concat!(
         "Cannot decide eza directory. (expects as least one of ",
         "EZA_CONFIG_DIR, XDG_CONFIG_HOME, HOME to be set)"
@@ -38,7 +37,7 @@ fn main() -> AnyResult<()> {
             eza_dir.display()
         )));
     }
-    fs::create_dir_all(theme_dir).context(format!(
+    fs::create_dir_all(&theme_dir).context(format!(
         "Failed to create theme directory at {}",
         theme_dir.display()
     ))?;
@@ -48,7 +47,7 @@ fn main() -> AnyResult<()> {
 
     match cf.cmd {
         Commands::List => {
-            let v = vec_list_themes(theme_dir).context("Failed to get themes")?;
+            let v = vec_list_themes(&theme_dir).context("Failed to get themes")?;
             for t in &v {
                 print!("{}\n", t.prettify());
             }
@@ -57,7 +56,7 @@ fn main() -> AnyResult<()> {
             theme_name,
             interactive,
         } => {
-            let theme_name = resolve_theme_name(theme_dir, interactive, theme_name)
+            let theme_name = resolve_theme_name(&theme_dir, interactive, theme_name)
                 .context("Failed to select theme name")?;
             let theme_file = ThemeName::from_str(&theme_name)
                 .context("Invalid theme name")?
@@ -92,7 +91,7 @@ fn main() -> AnyResult<()> {
             theme_name,
             interactive,
         } => {
-            let theme_name = resolve_theme_name(theme_dir, interactive, theme_name)
+            let theme_name = resolve_theme_name(&theme_dir, interactive, theme_name)
                 .context("Failed to select theme name")?;
             let theme_file = ThemeName::from_str(&theme_name)
                 .context("Invalid theme name")?
@@ -104,7 +103,7 @@ fn main() -> AnyResult<()> {
                 return Err(anyhow!("No such file or directory"));
             }
 
-            create_test_dir(theme_dir).context("Failed to create test dir")?;
+            create_test_dir(&theme_dir).context("Failed to create test dir")?;
 
             let test_dir = theme_dir.join("test_dir");
 
