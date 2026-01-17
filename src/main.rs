@@ -17,14 +17,8 @@ use dialoguer::{Select, theme::ColorfulTheme};
 fn main() -> AnyResult<()> {
     let cf = Cli::parse();
 
-    let theme_dir = get_config_dir().context(concat!(
-        "Cannot decide theme directory. (expects as least one of ",
-        "EZA_THEME_DIR, XDG_DATA_HOME, HOME to be set)"
-    ))?;
-    let eza_dir: PathBuf = get_eza_dir().context(concat!(
-        "Cannot decide eza directory. (expects as least one of ",
-        "EZA_CONFIG_DIR, XDG_CONFIG_HOME, HOME to be set)"
-    ))?;
+    let theme_dir = get_config_dir()?;
+    let eza_dir: PathBuf = get_eza_dir()?;
     let eza_dir: &Path = eza_dir.as_path();
     if !eza_dir.exists() || !eza_dir.is_dir() {
         return Err(anyhow!(format!(
@@ -135,7 +129,7 @@ fn main() -> AnyResult<()> {
     Ok(())
 }
 
-fn get_config_dir() -> Option<PathBuf> {
+fn get_config_dir() -> AnyResult<PathBuf> {
     env::var("EZA_THEME_DIR")
         .ok()
         .map(PathBuf::from)
@@ -151,10 +145,14 @@ fn get_config_dir() -> Option<PathBuf> {
                     .join("share")
                     .join("eza-themes")
             })
-        })
+        }).context(concat!(
+        "Cannot decide theme directory. (expects as least one of ",
+        "EZA_THEME_DIR, XDG_DATA_HOME, HOME to be set)"
+        ))
+
 }
 
-fn get_eza_dir() -> Option<PathBuf> {
+fn get_eza_dir() -> AnyResult<PathBuf> {
     env::var("EZA_CONFIG_DIR")
         .ok()
         .map(PathBuf::from)
@@ -167,7 +165,10 @@ fn get_eza_dir() -> Option<PathBuf> {
             env::var("HOME")
                 .ok()
                 .map(|p| PathBuf::from(p).join(".config").join("eza"))
-        })
+        }).context(concat!(
+        "Cannot decide eza directory. (expects as least one of ",
+        "EZA_CONFIG_DIR, XDG_CONFIG_HOME, HOME to be set)"
+        ))
 }
 
 fn resolve_theme_name(
