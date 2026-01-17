@@ -6,6 +6,12 @@ apply global overlay.
 
 Version 1.0.0
 
+# Installation
+
+```
+cargo install eza-themer
+```
+
 # Setup
 
 `eza-themer` finds your themes inside `EZA_THEME_DIR` or 
